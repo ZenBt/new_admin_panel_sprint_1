@@ -86,6 +86,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOCALE_PATHS = ['movies/locale'] 
 
 LANGUAGE_CODE = "ru-RU"
 

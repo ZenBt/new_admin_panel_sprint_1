@@ -34,8 +34,8 @@ class Genre(UUIDMixin, TimeStampedMixin):
 
         db_table = "content\".\"genre"
 
-        verbose_name = "Жанр"
-        verbose_name_plural = "Жанры"
+        verbose_name = _("Genre")
+        verbose_name_plural = _("Genres")
     
 
     def __str__(self):
@@ -59,8 +59,8 @@ class FilmWork(UUIDMixin, TimeStampedMixin):
 
         db_table = "content\".\"film_work"
 
-        verbose_name = "Кинопроизведение"
-        verbose_name_plural = "Кинопроизведения"
+        verbose_name = _("Filmwork")
+        verbose_name_plural = _("Filmworks")
 
 
     def __str__(self):
@@ -81,14 +81,14 @@ class GenreFilmwork(UUIDMixin):
 
 class Person(UUIDMixin, TimeStampedMixin):
     
-    full_name = models.CharField(verbose_name=_("full name"), max_length=255)
+    full_name = models.CharField(verbose_name=_("Full name"), max_length=255)
     
     class Meta:
 
         db_table = "content\".\"person"
 
-        verbose_name = "Персона"
-        verbose_name_plural = "Персоны"
+        verbose_name = _("Person")
+        verbose_name_plural = _("Persons")
     
     def __str__(self):
         return self.full_name
@@ -105,6 +105,6 @@ class PersonFilmwork(UUIDMixin):
 
         db_table = "content\".\"person_film_work"
 
-        verbose_name = "Персона кинопроизведения"
-        verbose_name_plural = "Персоны кинопроизведений"
+        verbose_name = _("Person filmwork")
+        verbose_name_plural = _("Person filmworks")
     
