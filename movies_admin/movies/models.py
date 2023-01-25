@@ -25,7 +25,7 @@ class UUIDMixin(models.Model):
         abstract = True
 
 
-class Genre(UUIDMixin, TimeStampedMixin, models.Model):
+class Genre(UUIDMixin, TimeStampedMixin):
 
     name = models.CharField(_("name"), max_length=255)
     description = models.TextField(_("description"), blank=True)
@@ -42,7 +42,7 @@ class Genre(UUIDMixin, TimeStampedMixin, models.Model):
         return self.name 
 
 
-class FilmWork(UUIDMixin, TimeStampedMixin, models.Model):
+class FilmWork(UUIDMixin, TimeStampedMixin):
 
     title = models.CharField(_("title"), max_length=255)
     description = models.TextField(_("description"), blank=True)
