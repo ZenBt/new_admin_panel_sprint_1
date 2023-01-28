@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "movies-admin"
+version = "0.1.0"
+description = "A small admin panel for movies db"
+authors = ["Igor S. <zenbee111@gmail.com>"]
+readme = "README.md"
+packages = [{include = "movies_admin"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = "^4.1.5"
+python-dotenv = "^0.21.1"
+psycopg2 = "^2.9.5"
+flake8 = "^6.0.0"
+django-split-settings = "^1.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
