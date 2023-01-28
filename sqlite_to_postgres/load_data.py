@@ -6,6 +6,7 @@ from psycopg2.extras import DictCursor
 
 from .extractor import SQLiteExtractor
 from .saver import PostgresSaver
+from .config import PG_DSL, SQLITE_DB_PATH
 
 
 def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
@@ -18,14 +19,7 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
 
 
 if __name__ == "__main__":
-    dsl = {
-        "dbname": "movies_database",
-        "user": "app",
-        "password": "123qwe",
-        "host": "127.0.0.1",
-        "port": 5432,
-    }
-    with sqlite3.connect("db.sqlite") as sqlite_conn, psycopg2.connect(
-        **dsl, cursor_factory=DictCursor
+    with sqlite3.connect(SQLITE_DB_PATH) as sqlite_conn, psycopg2.connect(
+        **PG_DSL, cursor_factory=DictCursor
     ) as pg_conn:
         load_from_sqlite(sqlite_conn, pg_conn)
