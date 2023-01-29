@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from sqlite3 import Connection as SQLiteConnection, Row
 from dataclasses import dataclass
 
+from config import CHUNK_SIZE
 from dto import (
     SQLiteMovies,
     SQLitePerson,
@@ -14,7 +15,7 @@ from dto import (
 
 class BaseSQLiteExtractor(ABC):
     def __init__(self, connection: SQLiteConnection) -> None:
-        self._chunk_size = 1000
+        self._chunk_size = CHUNK_SIZE
         self._conn = connection
         self._is_selected = False
         self._set_row_factory()
@@ -61,9 +62,9 @@ class SQLiteExtractor(BaseSQLiteExtractor):
         )
     
     def _make_selects(self) -> None:
-        self._p_cursor.execute("SELECT * FROM person;")
-        self._f_cursor.execute("SELECT * FROM film_work;")
-        self._g_cursor.execute("SELECT * FROM genre;")
+        self._p_cursor.execute("SELECT * FROM person ORDER BY id;")
+        self._f_cursor.execute("SELECT * FROM film_work ORDER BY id;")
+        self._g_cursor.execute("SELECT * FROM genre ORDER BY id;")
 
     def _extract_persons(self) -> list[SQLitePerson]:
         """Extract persons from SQLite"""
@@ -111,8 +112,8 @@ class RelationalSQLiteExtractor(BaseSQLiteExtractor):
         )
     
     def _make_selects(self) -> None:
-        self._gf_cursor.execute("SELECT * FROM genre_film_work;")
-        self._pf_cursor.execute("SELECT * FROM person_film_work;")
+        self._gf_cursor.execute("SELECT * FROM genre_film_work ORDER BY id;")
+        self._pf_cursor.execute("SELECT * FROM person_film_work ORDER BY id;")
 
     def _extract_genre_film_works(self) -> list[SQLiteGenreFilmwork]:
         """Extract genre_film_works from SQLite"""

@@ -65,6 +65,7 @@ class SQLiteToPGTransformer(BaseTransformer):
             PGFilmWork(
                 id=filmwork.id,
                 title=filmwork.title,
+                file_path=filmwork.file_path,
                 description=filmwork.description,
                 creation_date=filmwork.creation_date,
                 rating=filmwork.rating,

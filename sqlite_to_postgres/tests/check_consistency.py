@@ -1,10 +1,21 @@
 from unittest import TestCase
 import sqlite3
+from datetime import datetime
 
 import psycopg2
 from psycopg2.extras import DictCursor
 
 from config import PG_DSL, SQLITE_DB_PATH
+from extractor import RelationalSQLiteExtractor, SQLiteExtractor
+from dto import (
+    PGFilmWork,
+    PGGenre,
+    PGGenreFilmwork,
+    PGPerson,
+    PGPersonFilmWork,
+    PGMovies,
+    RelationalPGMovies,
+)
 from load_data import load_from_sqlite
 
 
@@ -192,58 +203,83 @@ class TestLoadedDataMatches(BaseLoadTestCase):
     
     def _get_data_from_pg(self) -> dict:
         self.cur.execute("SELECT * FROM film_work ORDER BY id;")
-        filmwork_data = self.cur.fetchall()
+        filmwork_data = [PGFilmWork(**row) for row in self.cur.fetchall()]
         self.cur.execute("SELECT * FROM genre ORDER BY id;")
-        genre_data = self.cur.fetchall()
+        genre_data = [PGGenre(**row) for row in self.cur.fetchall()]
         self.cur.execute("SELECT * FROM person ORDER BY id;")
-        person_data = self.cur.fetchall()
-        self.cur.execute("SELECT * FROM genre_film_work; ORDER BY id")
-        genre_filmwork_data = self.cur.fetchall()
+        person_data = [PGPerson(**row) for row in self.cur.fetchall()]
+        self.cur.execute("SELECT * FROM genre_film_work ORDER BY id;")
+        genre_filmwork_data = [PGGenreFilmwork(**row) for row in self.cur.fetchall()]
         self.cur.execute("SELECT * FROM person_film_work ORDER BY id;")
-        person_filmwork_data = self.cur.fetchall()
+        person_filmwork_data = [PGPersonFilmWork(**row) for row in self.cur.fetchall()]
         return {
-            "filmwork": filmwork_data,
-            "genre": genre_data,
-            "person": person_data,
-            "genre_filmwork": genre_filmwork_data,
-            "person_filmwork": person_filmwork_data,
+            "movies": PGMovies(
+                filmworks=filmwork_data,
+                genres=genre_data,
+                persons=person_data,
+            ),
+            "rel_movies": RelationalPGMovies(
+                genre_film_works=genre_filmwork_data,
+                person_film_works=person_filmwork_data,
+            )
         }
     
     def _get_data_from_sqlite(self) -> dict:
-        self.s_cur.execute("SELECT * FROM film_work ORDER BY id;")
-        filmwork_data = self.s_cur.fetchall()
-        self.s_cur.execute("SELECT * FROM genre ORDER BY id;")
-        genre_data = self.s_cur.fetchall()
-        self.s_cur.execute("SELECT * FROM person ORDER BY id;")
-        person_data = self.s_cur.fetchall()
-        self.s_cur.execute("SELECT * FROM genre_film_work ORDER BY id;")
-        genre_filmwork_data = self.s_cur.fetchall()
-        self.s_cur.execute("SELECT * FROM person_film_work ORDER BY id;")
-        person_filmwork_data = self.s_cur.fetchall()
+        s_movies = SQLiteExtractor(self.sqlite_conn).extract()
+        s_rel_movies = RelationalSQLiteExtractor(self.sqlite_conn).extract()
         return {
-            "filmwork": filmwork_data,
-            "genre": genre_data,
-            "person": person_data,
-            "genre_filmwork": genre_filmwork_data,
-            "person_filmwork": person_filmwork_data,
+            "movies": s_movies,
+            "rel_movies": s_rel_movies,
         }
-    
+
+
     def test_filmwork_data_in_pg_equals_to_sqlite(self):
         self._load_data_and_get_data()
-        self.assertEqual(self.pg_data["filmwork"], self.sqlite_data["filmwork"])
+        
+        for p_row, s_row in zip(self.pg_data["movies"].filmworks, self.sqlite_data["movies"].film_works):
+            self.assertEqual(s_row.id, p_row.id)
+            self.assertEqual(s_row.title, p_row.title)
+            self.assertEqual(s_row.description, p_row.description)
+            self.assertEqual(s_row.rating, p_row.rating)
+            self.assertEqual(s_row.type, p_row.type)
+            self.assertEqual(datetime.fromisoformat(s_row.created_at), p_row.created)
+            self.assertEqual(datetime.fromisoformat(s_row.updated_at), p_row.modified)
+            self.assertEqual(s_row.creation_date, p_row.creation_date)
     
     def test_genre_data_in_pg_equals_to_sqlite(self):
         self._load_data_and_get_data()
-        self.assertEqual(self.pg_data["genre"], self.sqlite_data["genre"])
+        
+        for p_row, s_row in zip(self.pg_data["movies"].genres, self.sqlite_data["movies"].genres):
+            self.assertEqual(s_row.id, p_row.id)
+            self.assertEqual(s_row.name, p_row.name)
+            self.assertEqual(s_row.description, p_row.description)
+            self.assertEqual(datetime.fromisoformat(s_row.created_at), p_row.created)
+            self.assertEqual(datetime.fromisoformat(s_row.updated_at), p_row.modified)
     
     def test_person_data_in_pg_equals_to_sqlite(self):
         self._load_data_and_get_data()
-        self.assertEqual(self.pg_data["person"], self.sqlite_data["person"])
+        
+        for p_row, s_row in zip(self.pg_data["movies"].persons, self.sqlite_data["movies"].persons):
+            self.assertEqual(s_row.id, p_row.id)
+            self.assertEqual(s_row.full_name, p_row.full_name)
+            self.assertEqual(datetime.fromisoformat(s_row.created_at), p_row.created)
+            self.assertEqual(datetime.fromisoformat(s_row.updated_at), p_row.modified)
     
     def test_genre_filmwork_data_in_pg_equals_to_sqlite(self):
         self._load_data_and_get_data()
-        self.assertEqual(self.pg_data["genre_filmwork"], self.sqlite_data["genre_filmwork"])
-    
+        
+        for p_row, s_row in zip(self.pg_data["rel_movies"].genre_film_works, self.sqlite_data["rel_movies"].genre_film_works):
+            self.assertEqual(s_row.id, p_row.id)
+            self.assertEqual(s_row.film_work_id, p_row.film_work_id)
+            self.assertEqual(s_row.genre_id, p_row.genre_id)
+            self.assertEqual(datetime.fromisoformat(s_row.created_at), p_row.created)
+
     def test_person_filmwork_data_in_pg_equals_to_sqlite(self):
         self._load_data_and_get_data()
-        self.assertEqual(self.pg_data["person_filmwork"], self.sqlite_data["person_filmwork"])
+        
+        for p_row, s_row in zip(self.pg_data["rel_movies"].person_film_works, self.sqlite_data["rel_movies"].person_film_works):
+            self.assertEqual(s_row.id, p_row.id)
+            self.assertEqual(s_row.film_work_id, p_row.film_work_id)
+            self.assertEqual(s_row.person_id, p_row.person_id)
+            self.assertEqual(s_row.role, p_row.role)
+            self.assertEqual(datetime.fromisoformat(s_row.created_at), p_row.created)
