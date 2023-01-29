@@ -88,11 +88,7 @@ class MultiStageETL(ETL):
         (N = chunk_size, default=1000)
         """
         self._set_chunk_size(chunk_size)
-        print("Start ETL for primary tables")
         self._run_etl_for_primary_tables()
-        import time
-        time.sleep(3)
-        print("Start ETL for related tables")
         self._run_etl_for_related_tables()
 
     def _run_etl_for_primary_tables(self) -> None:
