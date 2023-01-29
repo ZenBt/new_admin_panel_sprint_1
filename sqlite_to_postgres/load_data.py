@@ -8,6 +8,7 @@ from extractor import SQLiteExtractor
 from transformer import SQLiteToPGTransformer
 from saver import PostgresSaver
 from config import PG_DSL, SQLITE_DB_PATH
+from etl import SQLiteToPGETL
 
 
 def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
@@ -16,12 +17,8 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
     transformer = SQLiteToPGTransformer()
     postgres_saver = PostgresSaver(pg_conn)
     
-    sqlite_data = sqlite_extractor.extract_movies()
-    
-    transformer.sqlite_data = sqlite_data
-    pg_data = transformer.transform()
-    
-    postgres_saver.save_all_data(pg_data)
+    etl = SQLiteToPGETL(sqlite_extractor, transformer, postgres_saver)
+    etl.run()
 
 
 if __name__ == "__main__":

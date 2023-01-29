@@ -17,6 +17,7 @@ class TimeStampedMixin:
 @dataclass
 class FilmWork(UUIDMixin, TimeStampedMixin):
     title: str
+    file_path: str | None
     description: str | None
     creation_date: date | None
     rating: float | None

@@ -24,6 +24,17 @@ class SQLiteMovies:
     genre_filmworks: list[SQLiteGenreFilmwork]
     person_filmworks: list[SQLitePersonFilmWork]
 
+    def __bool__(self):
+        return any(
+            (
+                self.film_works,
+                self.genres,
+                self.persons,
+                self.genre_filmworks,
+                self.person_filmworks,
+            )
+        )
+
 
 @dataclass
 class PGMovies:
