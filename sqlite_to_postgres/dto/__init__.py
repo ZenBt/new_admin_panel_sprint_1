@@ -11,4 +11,6 @@ from .transform_dto import (
     SQLitePersonFilmWork,
     SQLiteMovies,
     PGMovies,
+    RelationalSQLiteMovies,
+    RelationalPGMovies,
 )

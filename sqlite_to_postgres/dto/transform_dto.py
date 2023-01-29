@@ -21,8 +21,6 @@ class SQLiteMovies:
     film_works: list[SQLiteFilmWork]
     genres: list[SQLiteGenre]
     persons: list[SQLitePerson]
-    genre_filmworks: list[SQLiteGenreFilmwork]
-    person_filmworks: list[SQLitePersonFilmWork]
 
     def __bool__(self):
         return any(
@@ -30,8 +28,20 @@ class SQLiteMovies:
                 self.film_works,
                 self.genres,
                 self.persons,
-                self.genre_filmworks,
-                self.person_filmworks,
+            )
+        )
+
+
+@dataclass
+class RelationalSQLiteMovies:
+    genre_film_works: list[SQLiteGenreFilmwork]
+    person_film_works: list[SQLitePersonFilmWork]
+
+    def __bool__(self):
+        return any(
+            (
+                self.genre_film_works,
+                self.person_film_works,
             )
         )
 
@@ -41,5 +51,10 @@ class PGMovies:
     filmworks: list[PGFilmWork]
     genres: list[PGGenre]
     persons: list[PGPerson]
-    genre_filmworks: list[PGGenreFilmwork]
-    person_filmworks: list[PGPersonFilmWork]
+
+
+@dataclass
+class RelationalPGMovies:
+    genre_film_works: list[PGGenreFilmwork]
+    person_film_works: list[PGPersonFilmWork]
+

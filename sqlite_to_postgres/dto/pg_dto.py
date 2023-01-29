@@ -37,14 +37,14 @@ class Genre(UUIDMixin, TimeStampedMixin):
 
 @dataclass
 class GenreFilmwork(UUIDMixin):
-    filmwork_id: UUID
+    film_work_id: UUID
     genre_id: UUID
     created: datetime | None
 
 
 @dataclass
 class PersonFilmWork(UUIDMixin):
-    filmwork_id: UUID
+    film_work_id: UUID
     person_id: UUID
     role: str
     created: datetime | None
