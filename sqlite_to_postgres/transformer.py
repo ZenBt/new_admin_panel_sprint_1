@@ -1,4 +1,4 @@
-from .dto import (
+from dto import (
     SQLiteMovies,
     PGMovies,
     SQLitePerson,

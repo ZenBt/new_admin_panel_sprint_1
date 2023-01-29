@@ -1,6 +1,6 @@
 from sqlite3 import Connection as SQLiteConnection
 
-from .dto import (
+from dto import (
     SQLiteMovies,
     SQLitePerson,
     SQLiteFilmWork,

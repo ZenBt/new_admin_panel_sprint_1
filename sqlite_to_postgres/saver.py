@@ -1,6 +1,6 @@
 from psycopg2.extensions import connection as _connection
 
-from .dto import (
+from dto import (
     PGMovies,
     PGFilmWork,
     PGPerson,
