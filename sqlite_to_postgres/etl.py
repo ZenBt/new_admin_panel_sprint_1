@@ -19,7 +19,7 @@ class SQLiteToPGETL:
     def run(self, chunk_size: int = 1000):
         """Run ETL
         1. Extract data from SQLite DB
-            (film_work, genre, person, genre_filmwork, person_filmworks)
+            (film_work, genre, person, genre_fil_mwork, person_fil_mworks)
         2. Transform data to Postgres format
         3. Save data to Postgres DB
             (filmwork, genre, person, genre_filmwork, person_filmworks)
