@@ -1,5 +1,19 @@
 # Проектное задание: перенос данных
 
+## Запуск скрипта
+
+```
+poetry install  
+poetry shell  
+python load_data.py 
+```
+
+## Запуск тестов
+
+```
+python -m unittest tests/check_consistency.py
+```
+
 Вооружитесь библиотеками psycopg2 и sqlite3, чтобы создать скрипт для миграции данных в новую базу.
 
 Критерии готовности:
