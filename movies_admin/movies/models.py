@@ -3,7 +3,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
 
-from movies.choices import FilmWorkType
+from movies.choices import FilmWorkType, RoleChoices
 
 
 class TimeStampedMixin(models.Model):
@@ -83,6 +83,7 @@ class GenreFilmwork(UUIDMixin):
 class Person(UUIDMixin, TimeStampedMixin):
     
     full_name = models.CharField(verbose_name=_("Full name"), max_length=255)
+    film_works = models.ManyToManyField(FilmWork, through='PersonFilmwork')   
     
     class Meta:
 
@@ -99,7 +100,7 @@ class PersonFilmwork(UUIDMixin):
 
     film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    role = models.TextField(verbose_name=_('Role'), null=True)
+    role = models.TextField(verbose_name=_('Role'), null=True, choices=RoleChoices.choices)
     created = models.DateTimeField(verbose_name=_('Created at'), auto_now_add=True)
 
     class Meta:
