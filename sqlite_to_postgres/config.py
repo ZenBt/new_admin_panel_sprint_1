@@ -13,3 +13,5 @@ PG_DSL = {
 }
 
 SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH")
+
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 1000))

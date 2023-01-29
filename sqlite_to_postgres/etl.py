@@ -29,10 +29,10 @@ class SQLiteToPGETL:
         (N = chunk_size, default=1000)
         """
         self._extractor.set_chunk_size(chunk_size)
-        sqlite_data = self._extractor.extract_movies(chunk_size=chunk_size)
+        sqlite_data = self._extractor.extract_movies()
 
         while sqlite_data:
             self._transformer.sqlite_data = sqlite_data
             pg_data = self._transformer.transform()
             self._saver.save_all_data(pg_data)
-            sqlite_data = self._extractor.extract_movies(chunk_size=chunk_size)
+            sqlite_data = self._extractor.extract_movies()

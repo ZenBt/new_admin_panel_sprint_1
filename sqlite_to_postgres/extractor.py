@@ -31,7 +31,7 @@ class SQLiteExtractor:
     def set_chunk_size(self, chunk_size: int) -> None:
         self._chunk_size = chunk_size
 
-    def extract_movies(self, chunk_size: int) -> SQLiteMovies:
+    def extract_movies(self) -> SQLiteMovies:
         """Extract movies from SQLite"""
         if not self._is_selected:
             self._make_selects()
