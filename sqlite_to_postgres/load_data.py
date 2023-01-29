@@ -25,8 +25,6 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
 
 
 if __name__ == "__main__":
-    print(PG_DSL)
-    print(SQLITE_DB_PATH)
     with sqlite3.connect(SQLITE_DB_PATH) as sqlite_conn, psycopg2.connect(
         **PG_DSL, cursor_factory=DictCursor
     ) as pg_conn:
