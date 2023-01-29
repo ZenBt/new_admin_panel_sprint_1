@@ -34,5 +34,6 @@ class SQLiteToPGETL:
         while sqlite_data:
             self._transformer.sqlite_data = sqlite_data
             pg_data = self._transformer.transform()
+            print(pg_data)
             self._saver.save_all_data(pg_data)
             sqlite_data = self._extractor.extract_movies()
