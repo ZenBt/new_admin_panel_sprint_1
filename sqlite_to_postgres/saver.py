@@ -49,7 +49,7 @@ class BasePostgresSaver(ABC):
     ) -> None:
 
         data = [tuple(getattr(item, field) for field in fields) for item in items]
-       
+
         args = ",".join(
             self._cursor.mogrify(f"({', '.join(['%s'] * len(fields))})", item).decode()
             for item in data
@@ -61,7 +61,7 @@ class BasePostgresSaver(ABC):
             unique_fields=", ".join(unique_fileds),
         )
         self._cursor.execute(stmt)
-    
+
     def _get_dataclass_fields(self, dataclass: type) -> tuple[str, ...]:
         return tuple(field.name for field in dataclass_fields(dataclass))
 
@@ -99,7 +99,7 @@ class PostgresSaver(BasePostgresSaver):
     def _save_persons(self, persons: list[PGPerson]):
         if not persons:
             return
-        
+
         self._perform_insert(
             PERSON_TABLE,
             BASE_INSERT_STMT,
@@ -129,7 +129,7 @@ class RelationalPostgresSaver(BasePostgresSaver):
     def _save_person_film_works(self, person_film_works: list[PGPersonFilmWork]):
         if not person_film_works:
             return
-        
+
         self._perform_insert(
             PERSON_FILMWORK_TABLE,
             BASE_INSERT_STMT,

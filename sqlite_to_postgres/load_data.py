@@ -12,7 +12,7 @@ def load_from_sqlite(connection: sqlite3.Connection, pg_conn: _connection):
     """Основной метод загрузки данных из SQLite в Postgres"""
     etl = MultiStageETL(connection, pg_conn)
     etl.run(chunk_size=CHUNK_SIZE)
-   
+
 
 if __name__ == "__main__":
     with sqlite3.connect(SQLITE_DB_PATH) as sqlite_conn, psycopg2.connect(

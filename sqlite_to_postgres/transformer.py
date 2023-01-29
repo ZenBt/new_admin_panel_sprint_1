@@ -12,6 +12,7 @@ from dto import (
     RelationalPGMovies,
 )
 
+
 class BaseTransformer(ABC):
     @abstractmethod
     def transform(self) -> PGMovies | RelationalPGMovies:
@@ -27,7 +28,6 @@ class BaseTransformer(ABC):
 
 
 class SQLiteToPGTransformer(BaseTransformer):
-    
     def __init__(self):
         self._sqlite_data: SQLiteMovies | None = None
 
@@ -88,7 +88,6 @@ class SQLiteToPGTransformer(BaseTransformer):
             for genre in self.sqlite_data.genres
         ]
 
-
     def _make_pg_data(
         self,
         filmworks: list[PGFilmWork],
@@ -112,10 +111,7 @@ class RelationalSQLiteToPGTransformer(BaseTransformer):
         :return: Postgres data
         :raises AssertionError: if SQLite data is not set
         """
-        assert (
-            self.sqlite_data is not None
-        ), "SQLite data with relations is not set"
-
+        assert self.sqlite_data is not None, "SQLite data with relations is not set"
 
         genre_film_works = self._transform_genre_film_works()
         person_film_works = self._transform_person_film_works()
@@ -124,7 +120,7 @@ class RelationalSQLiteToPGTransformer(BaseTransformer):
             genre_film_works=genre_film_works,
             person_film_works=person_film_works,
         )
-    
+
     def _transform_genre_film_works(self) -> list[PGGenreFilmwork]:
         return [
             PGGenreFilmwork(
@@ -147,7 +143,7 @@ class RelationalSQLiteToPGTransformer(BaseTransformer):
             )
             for person_filmwork in self.sqlite_data.person_film_works
         ]
-    
+
     def _make_pg_data(
         self,
         genre_film_works: list[PGGenreFilmwork],

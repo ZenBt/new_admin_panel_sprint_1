@@ -114,13 +114,13 @@ class MultiStageETL(ETL):
         saver: Type[BasePostgresSaver],
         concrete_etl: Type[ConcreteETL],
     ) -> None:
-        
+
         extractor = extractor(self._connection)
         transformer = transformer()
         saver = saver(self._pg_conn.cursor())
 
         etl = concrete_etl(extractor, transformer, saver)
         etl.run(self.chunk_size)
-    
+
     def _set_chunk_size(self, chunk_size: int) -> None:
         self.chunk_size = chunk_size

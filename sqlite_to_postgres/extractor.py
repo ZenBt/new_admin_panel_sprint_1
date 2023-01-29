@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from sqlite3 import Connection as SQLiteConnection, Row
-from dataclasses import dataclass
 
 from config import CHUNK_SIZE
 from dto import (
@@ -13,6 +12,7 @@ from dto import (
     RelationalSQLiteMovies,
 )
 
+
 class BaseSQLiteExtractor(ABC):
     def __init__(self, connection: SQLiteConnection) -> None:
         self._chunk_size = CHUNK_SIZE
@@ -20,19 +20,19 @@ class BaseSQLiteExtractor(ABC):
         self._is_selected = False
         self._set_row_factory()
         self._init_cursors()
-    
+
     @abstractmethod
     def _init_cursors(self) -> None:
         raise NotImplementedError
-    
+
     @abstractmethod
     def extract(self) -> SQLiteMovies | RelationalSQLiteMovies:
         raise NotImplementedError
-    
+
     @abstractmethod
     def _make_selects(self) -> None:
         raise NotImplementedError
-    
+
     def _set_row_factory(self) -> None:
         self._conn.row_factory = Row
 
@@ -41,7 +41,6 @@ class BaseSQLiteExtractor(ABC):
 
 
 class SQLiteExtractor(BaseSQLiteExtractor):
-    
     def _init_cursors(self) -> None:
         self._p_cursor = self._conn.cursor()
         self._f_cursor = self._conn.cursor()
@@ -52,15 +51,13 @@ class SQLiteExtractor(BaseSQLiteExtractor):
         if not self._is_selected:
             self._make_selects()
             self._is_selected = True
-        
+
         film_works = self._extract_filmworks()
         genres = self._extract_genres()
         persons = self._extract_persons()
 
-        return self._make_sqlite_data(
-            film_works, genres, persons
-        )
-    
+        return self._make_sqlite_data(film_works, genres, persons)
+
     def _make_selects(self) -> None:
         self._p_cursor.execute("SELECT * FROM person ORDER BY id;")
         self._f_cursor.execute("SELECT * FROM film_work ORDER BY id;")
@@ -70,7 +67,6 @@ class SQLiteExtractor(BaseSQLiteExtractor):
         """Extract persons from SQLite"""
         res = self._p_cursor.fetchmany(self._chunk_size)
         return [SQLitePerson(**row) for row in res]
-
 
     def _extract_filmworks(self) -> list[SQLiteFilmWork]:
         """Extract filmworks from SQLite"""
@@ -82,35 +78,27 @@ class SQLiteExtractor(BaseSQLiteExtractor):
         res = self._g_cursor.fetchmany(self._chunk_size)
         return [SQLiteGenre(**row) for row in res]
 
-    def _make_sqlite_data(
-        self, film_works, genres, persons
-    ):
+    def _make_sqlite_data(self, film_works, genres, persons):
         """Make SQLiteMovies object"""
-        return SQLiteMovies(
-            film_works=film_works,
-            genres=genres,
-            persons=persons
-        )
+        return SQLiteMovies(film_works=film_works, genres=genres, persons=persons)
 
 
 class RelationalSQLiteExtractor(BaseSQLiteExtractor):
     def _init_cursors(self) -> None:
         self._gf_cursor = self._conn.cursor()
         self._pf_cursor = self._conn.cursor()
-    
+
     def extract(self) -> SQLiteMovies:
         """Extract movies from SQLite"""
         if not self._is_selected:
             self._make_selects()
             self._is_selected = True
-        
+
         genre_film_works = self._extract_genre_film_works()
         person_film_works = self._extract_person_film_works()
 
-        return self._make_sqlite_data(
-            genre_film_works, person_film_works
-        )
-    
+        return self._make_sqlite_data(genre_film_works, person_film_works)
+
     def _make_selects(self) -> None:
         self._gf_cursor.execute("SELECT * FROM genre_film_work ORDER BY id;")
         self._pf_cursor.execute("SELECT * FROM person_film_work ORDER BY id;")
@@ -120,15 +108,12 @@ class RelationalSQLiteExtractor(BaseSQLiteExtractor):
         res = self._gf_cursor.fetchmany(self._chunk_size)
         return [SQLiteGenreFilmwork(**row) for row in res]
 
-
     def _extract_person_film_works(self) -> list[SQLitePersonFilmWork]:
         """Extract person_film_works from SQLite"""
         res = self._pf_cursor.fetchmany(self._chunk_size)
         return [SQLitePersonFilmWork(**row) for row in res]
 
-    def _make_sqlite_data(
-        self, genre_film_works, person_film_works
-    ):
+    def _make_sqlite_data(self, genre_film_works, person_film_works):
         """Make SQLiteMovies object"""
         return RelationalSQLiteMovies(
             genre_film_works=genre_film_works,

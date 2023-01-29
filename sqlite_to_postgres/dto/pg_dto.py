@@ -14,7 +14,6 @@ class TimeStampedMixin:
     modified: datetime | None
 
 
-
 @dataclass
 class FilmWork(UUIDMixin, TimeStampedMixin):
     title: str
