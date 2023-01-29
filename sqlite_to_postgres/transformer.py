@@ -20,8 +20,6 @@ class SQLiteToPGTransformer:
 
     @property
     def sqlite_data(self) -> SQLiteMovies:
-        if self._sqlite_data is None:
-            raise ValueError("SQLite data is not set")
         return self._sqlite_data
 
     @sqlite_data.setter
