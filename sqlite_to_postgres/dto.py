@@ -10,8 +10,8 @@ class UUIDMixin:
 
 @dataclass
 class TimeStampedMixin:
-    created_at: datetime | None
-    updated_at: datetime | None
+    created: datetime | None
+    modified: datetime | None
 
 
 @dataclass
@@ -26,7 +26,7 @@ class FilmWork(UUIDMixin, TimeStampedMixin):
 
 @dataclass
 class Person(UUIDMixin, TimeStampedMixin):
-    full_name: str | None
+    full_name: str
 
 
 @dataclass
@@ -39,7 +39,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
 class GenreFilmwork(UUIDMixin):
     film_work_id: UUID
     genre_id: UUID
-    created_at: datetime | None
+    created: datetime | None
 
 
 @dataclass
@@ -47,4 +47,13 @@ class PersonFilmWork(UUIDMixin):
     film_work_id: UUID
     person_id: UUID
     role: str
-    created_at: datetime | None
+    created: datetime | None
+
+
+DTO_TABLES_MAPPING = {
+    "film_work": FilmWork,
+    "person": Person,
+    "genre": Genre,
+    "genre_film_work": GenreFilmwork,
+    "person_film_work": PersonFilmWork,
+}
