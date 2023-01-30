@@ -7,7 +7,6 @@ from typing import Any, Generator
 from config import CHUNK_SIZE
 
 
-
 class BaseSQLiteExtractor(ABC):
     def __init__(self, cursor: Cursor, table: str) -> None:
         self._cur = cursor
@@ -51,8 +50,6 @@ class SQLiteMovieExtractor(BaseSQLiteExtractor):
                 return
 
             yield from rows
-
-    
 
 
 @contextmanager
