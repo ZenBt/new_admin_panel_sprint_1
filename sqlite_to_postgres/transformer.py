@@ -12,22 +12,23 @@ class BaseTransformer(Protocol):
 
 
 class SQLiteToPGTransformer(BaseTransformer):
-    def __init__(self, data: dict, table: str) -> None:
+    def __init__(self, rows: list[dict], table: str) -> None:
         self._table = table
-        self._data = data
+        self._rows = rows
 
-    def transform(self) -> Any:
+    def transform(self) -> list[Any]:
         """Transform SQLite data to Postgres data"""
-        data = self._transform_data(data=self._data)
-        return DTO_TABLES_MAPPING[self._table](**data)
+        rows = self._transform_data()
+        return [DTO_TABLES_MAPPING[self._table](**row) for row in rows]
 
-    def _transform_data(self, data: dict):
-        if created := data.get("created_at"):
-            data["created"] = created
-            del data["created_at"]
+    def _transform_data(self):
+        for row in self._rows:
+            if created := row.get("created_at"):
+                row["created"] = created
+                del row["created_at"]
 
-        if modified := data.get("updated_at"):
-            data["modified"] = modified
-            del data["updated_at"]
+            if modified := row.get("updated_at"):
+                row["modified"] = modified
+                del row["updated_at"]
 
-        return data
+        return self._rows
