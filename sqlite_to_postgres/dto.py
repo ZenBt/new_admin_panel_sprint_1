@@ -36,7 +36,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
 
 
 @dataclass
-class GenreFilmwork(UUIDMixin):
+class GenreFilmWork(UUIDMixin):
     film_work_id: UUID
     genre_id: UUID
     created: datetime | None
@@ -54,6 +54,6 @@ DTO_TABLES_MAPPING = {
     "film_work": FilmWork,
     "person": Person,
     "genre": Genre,
-    "genre_film_work": GenreFilmwork,
+    "genre_film_work": GenreFilmWork,
     "person_film_work": PersonFilmWork,
 }
