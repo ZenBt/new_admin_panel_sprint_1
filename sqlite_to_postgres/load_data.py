@@ -19,5 +19,6 @@ def load_from_sqlite(sqlite_cur: sqlite3.Cursor, pg_cur: _cursor):
 if __name__ == "__main__":
     with connect_to_sqlite3(SQLITE_DB_PATH) as sqlite_cur, psycopg2.connect(
         **PG_DSL, cursor_factory=DictCursor
-    ).cursor() as pg_cur:
+    ) as pg_conn:
+        pg_cur = pg_conn.cursor()
         load_from_sqlite(sqlite_cur, pg_cur)
