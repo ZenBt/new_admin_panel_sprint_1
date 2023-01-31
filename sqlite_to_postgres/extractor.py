@@ -35,7 +35,7 @@ class SQLiteMovieExtractor(BaseSQLiteExtractor):
             id
         """
 
-    def extract(self) -> Generator[dict, None, None]:
+    def extract(self) -> Generator[list[dict], None, None]:
         sql = self.BASE_SQL.format(table_name=self._table)
         try:
             self._cur.execute(sql)
@@ -49,7 +49,7 @@ class SQLiteMovieExtractor(BaseSQLiteExtractor):
             if not rows:
                 return
 
-            yield from rows
+            yield rows
 
 
 @contextmanager
