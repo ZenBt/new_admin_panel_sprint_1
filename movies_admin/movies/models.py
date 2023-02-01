@@ -59,6 +59,10 @@ class FilmWork(UUIDMixin, TimeStampedMixin):
     class Meta:
 
         db_table = "content\".\"film_work"
+        indexes = [
+            models.Index(fields=['creation_date', 'rating'], name='film_work_creation_rate_idx'),
+        ]
+
 
         verbose_name = _("Filmwork")
         verbose_name_plural = _("Filmworks")
@@ -77,6 +81,10 @@ class GenreFilmwork(UUIDMixin):
     class Meta:
 
         db_table = "content\".\"genre_film_work" 
+        unique_together = ('genre', 'film_work')
+        indexes = [
+            models.Index(fields=['genre_id', 'film_work_id'], name='genre_film_work_idx'),
+        ]
 
 
 
@@ -106,6 +114,10 @@ class PersonFilmwork(UUIDMixin):
     class Meta:
 
         db_table = "content\".\"person_film_work"
+        unique_together = ('person', 'film_work', 'role')
+        indexes = [
+            models.Index(fields=['person_id', 'film_work_id', 'role'], name='person_film_work_idx'),
+        ]
 
         verbose_name = _("Person filmwork")
         verbose_name_plural = _("Person filmworks")
