@@ -45,7 +45,7 @@ class Genre(UUIDMixin, TimeStampedMixin):
 class FilmWork(UUIDMixin, TimeStampedMixin):
 
     title = models.CharField(verbose_name=_("Title"), max_length=255)
-    file_path = models.TextField(verbose_name=_("File path"), blank=True, null=True)
+    file_path = models.TextField(verbose_name=_("File path"), blank=True)
     description = models.TextField(verbose_name=_("Description"), blank=True)
     creation_date = models.DateField(verbose_name=_("Creation date"))
     rating = models.FloatField(
@@ -59,6 +59,10 @@ class FilmWork(UUIDMixin, TimeStampedMixin):
     class Meta:
 
         db_table = "content\".\"film_work"
+        indexes = [
+            models.Index(fields=['creation_date', 'rating'], name='film_work_creation_rate_idx'),
+        ]
+
 
         verbose_name = _("Filmwork")
         verbose_name_plural = _("Filmworks")
@@ -77,6 +81,10 @@ class GenreFilmwork(UUIDMixin):
     class Meta:
 
         db_table = "content\".\"genre_film_work" 
+        unique_together = ('genre', 'film_work')
+        indexes = [
+            models.Index(fields=['genre_id', 'film_work_id'], name='genre_film_work_idx'),
+        ]
 
 
 
@@ -100,12 +108,16 @@ class PersonFilmwork(UUIDMixin):
 
     film_work = models.ForeignKey(FilmWork, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    role = models.TextField(verbose_name=_('Role'), null=True, choices=RoleChoices.choices)
+    role = models.TextField(verbose_name=_('Role'), choices=RoleChoices.choices)
     created = models.DateTimeField(verbose_name=_('Created at'), auto_now_add=True)
 
     class Meta:
 
         db_table = "content\".\"person_film_work"
+        unique_together = ('person', 'film_work', 'role')
+        indexes = [
+            models.Index(fields=['person_id', 'film_work_id', 'role'], name='person_film_work_idx'),
+        ]
 
         verbose_name = _("Person filmwork")
         verbose_name_plural = _("Person filmworks")
