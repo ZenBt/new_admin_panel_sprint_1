@@ -5,6 +5,7 @@ from dataclasses import fields as dataclass_fields
 from typing import Any
 
 import psycopg2
+from psycopg2 import extras
 from psycopg2.extensions import connection as _connection
 from psycopg2.extensions import cursor as _cursor
 
@@ -40,10 +41,8 @@ class BasePostgresSaver(ABC):
 
         data = [tuple(getattr(item, field) for field in fields) for item in items]
 
-        args = ",".join(
-            self._cursor.mogrify(f"({', '.join(['%s'] * len(fields))})", item).decode()
-            for item in data
-        )
+        args = f"({', '.join(['%s'] * len(fields))})"
+            
         stmt = stmt.format(
             schema=DEFAULT_SCHEMA,
             table=table,
@@ -51,7 +50,7 @@ class BasePostgresSaver(ABC):
             fields=", ".join(fields),
             unique_fields=", ".join(unique_fields),
         )
-        self._cursor.execute(stmt)
+        extras.execute_batch(self._cursor, stmt, data)
 
     def _get_dataclass_fields(self, dataclass: type) -> tuple[str, ...]:
         return tuple(field.name for field in dataclass_fields(dataclass))
