@@ -1,7 +1,11 @@
-from typing import Any
+import logging
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
 from dataclasses import fields as dataclass_fields
+from typing import Any
 
+import psycopg2
+from psycopg2.extensions import connection as _connection
 from psycopg2.extensions import cursor as _cursor
 
 from dto import DTO_TABLES_MAPPING
@@ -67,3 +71,18 @@ class PostgresSaver(BasePostgresSaver):
             unique_fields=unique_fields,
             items=items,
         )
+
+
+@contextmanager
+def connect_to_postgres(DSL: dict, cursor_factory: Any) -> _cursor:
+    pg_conn: _connection = psycopg2.connect(**DSL, cursor_factory=cursor_factory)
+    try:
+        logging.debug("Creating connection")
+        with pg_conn.cursor() as pg_cur:
+            logging.debug("Creating cursor")
+            yield pg_cur
+
+    finally:
+        logging.debug("Closing connection")
+        pg_conn.commit()
+        pg_conn.close()
